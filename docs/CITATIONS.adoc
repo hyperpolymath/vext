@@ -1,0 +1,36 @@
+= vext - Citation Guide
+:toc:
+
+== BibTeX
+
+[source,bibtex]
+----
+@software{vext_2025,
+  author = {Polymath, Hyper},
+  title = {vext},
+  year = {2025},
+  url = {https://github.com/hyperpolymath/vext},
+  license = {AGPL-3.0-or-later}
+}
+----
+
+== Harvard Style
+
+Polymath, H. (2025) _vext_ [Computer software]. Available at: https://github.com/hyperpolymath/vext
+
+== OSCOLA
+
+Hyper Polymath, 'vext' (2025) <https://github.com/hyperpolymath/vext>
+
+== MLA
+
+Polymath, Hyper. "vext." 2025, github.com/hyperpolymath/vext.
+
+== APA 7
+
+Polymath, H. (2025). _vext_ [Computer software]. GitHub. https://github.com/hyperpolymath/vext
+
+== See Also
+
+* link:../CITATION.cff[CITATION.cff]
+* link:../codemeta.json[codemeta.json]
