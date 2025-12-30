@@ -1,0 +1,137 @@
+# SPDX-License-Identifier: MIT OR AGPL-3.0-or-later
+# Publish to Arch User Repository on release
+name: AUR Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.0)'
+        required: true
+
+permissions: read-all
+
+jobs:
+  publish-aur:
+    name: Publish to AUR
+    runs-on: ubuntu-latest
+    if: vars.AUR_PUBLISH_ENABLED == 'true'
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Get version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate source tarball checksum
+        id: checksum
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://github.com/${{ github.repository }}/archive/refs/tags/v${VERSION}.tar.gz"
+          CHECKSUM=$(curl -sL "$URL" | sha256sum | cut -d' ' -f1)
+          echo "sha256=$CHECKSUM" >> $GITHUB_OUTPUT
+
+      - name: Update PKGBUILD
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          CHECKSUM="${{ steps.checksum.outputs.sha256 }}"
+
+          cd aur
+          sed -i "s/^pkgver=.*/pkgver=$VERSION/" PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('$CHECKSUM')/" PKGBUILD
+
+          # Generate .SRCINFO
+          cat > .SRCINFO << EOF
+          pkgbase = vext
+          	pkgdesc = High-performance IRC notification daemon for version control systems
+          	pkgver = $VERSION
+          	pkgrel = 1
+          	url = https://github.com/hyperpolymath/vext
+          	arch = x86_64
+          	arch = aarch64
+          	license = MIT
+          	license = AGPL-3.0-or-later
+          	makedepends = cargo
+          	makedepends = rust
+          	depends = gcc-libs
+          	depends = openssl
+          	provides = vextd
+          	provides = vext-send
+          	conflicts = vext-git
+          	source = vext-$VERSION.tar.gz::https://github.com/hyperpolymath/vext/archive/refs/tags/v$VERSION.tar.gz
+          	sha256sums = $CHECKSUM
+
+          pkgname = vext
+          EOF
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@a97f67e69b9709c3ffad393ca39b7c4ab1bfe6a5 # v3.0.1
+        if: ${{ secrets.AUR_SSH_PRIVATE_KEY != '' }}
+        with:
+          pkgname: vext
+          pkgbuild: aur/PKGBUILD
+          commit_username: hyperpolymath
+          commit_email: aur@hyperpolymath.dev
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to ${{ steps.version.outputs.version }}"
+
+  publish-aur-bin:
+    name: Publish vext-bin to AUR
+    runs-on: ubuntu-latest
+    needs: [publish-aur]
+    if: vars.AUR_PUBLISH_ENABLED == 'true'
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Get version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate binary checksums
+        id: checksums
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          BASE_URL="https://github.com/${{ github.repository }}/releases/download/v${VERSION}"
+
+          X86_URL="${BASE_URL}/vext-v${VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          AARCH64_URL="${BASE_URL}/vext-v${VERSION}-aarch64-unknown-linux-gnu.tar.gz"
+
+          X86_SUM=$(curl -sL "$X86_URL" | sha256sum | cut -d' ' -f1)
+          AARCH64_SUM=$(curl -sL "$AARCH64_URL" | sha256sum | cut -d' ' -f1)
+
+          echo "x86_64=$X86_SUM" >> $GITHUB_OUTPUT
+          echo "aarch64=$AARCH64_SUM" >> $GITHUB_OUTPUT
+
+      - name: Update PKGBUILD-bin
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          X86_SUM="${{ steps.checksums.outputs.x86_64 }}"
+          AARCH64_SUM="${{ steps.checksums.outputs.aarch64 }}"
+
+          cd aur
+          sed -i "s/^pkgver=.*/pkgver=$VERSION/" PKGBUILD-bin
+          sed -i "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('$X86_SUM')/" PKGBUILD-bin
+          sed -i "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('$AARCH64_SUM')/" PKGBUILD-bin
+
+      - name: Publish vext-bin to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@a97f67e69b9709c3ffad393ca39b7c4ab1bfe6a5 # v3.0.1
+        if: ${{ secrets.AUR_SSH_PRIVATE_KEY != '' }}
+        with:
+          pkgname: vext-bin
+          pkgbuild: aur/PKGBUILD-bin
+          commit_username: hyperpolymath
+          commit_email: aur@hyperpolymath.dev
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to ${{ steps.version.outputs.version }}"

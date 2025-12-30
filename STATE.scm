@@ -48,7 +48,10 @@
       "Multi-channel broadcasting"
       "Git hook integration"
       "ReScript tooling"
-      "Nickel configuration"))
+      "Nickel configuration"
+      "Multi-arch release binaries"
+      "Debian/RPM packaging"
+      "AUR packaging (source + binary)"))
 
   (route-to-mvp
     (milestone "1.0.0-rc1"
@@ -64,7 +67,9 @@
       (items
         (item "Release binaries" pending)
         (item "Publish to crates.io" pending)
-        (item "Container image on GHCR" pending))))
+        (item "Container image on GHCR" pending)
+        (item "AUR packages (vext, vext-bin)" pending)
+        (item "Multi-arch container (amd64, arm64)" pending))))
 
   (blockers-and-issues
     (critical)
@@ -85,6 +90,14 @@
       "Set up fuzzing"))
 
   (session-history
+    (snapshot "2025-12-31T00:30"
+      (accomplishments
+        "Created AUR PKGBUILD for source package"
+        "Created AUR PKGBUILD-bin for binary package"
+        "Added AUR publish workflow"
+        "Updated container workflow for multi-arch (amd64, arm64)"
+        "Added QEMU support for cross-platform builds"
+        "Added SBOM and provenance attestation to containers"))
     (snapshot "2025-12-30T23:00"
       (accomplishments
         "Comprehensive RSR compliance update"
