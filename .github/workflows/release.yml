@@ -16,6 +16,7 @@ permissions: read-all
 
 env:
   CARGO_TERM_COLOR: always
+  RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
   build-binaries:
@@ -70,26 +71,26 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cd target/${{ matrix.target }}/release
-          tar -czvf vext-${{ github.ref_name }}-${{ matrix.target }}.tar.gz vextd vext-send 2>/dev/null || tar -czvf vext-${{ github.ref_name }}-${{ matrix.target }}.tar.gz vextd
-          sha256sum vext-${{ github.ref_name }}-${{ matrix.target }}.tar.gz > vext-${{ github.ref_name }}-${{ matrix.target }}.tar.gz.sha256
+          tar -czvf vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.tar.gz vextd vext-send 2>/dev/null || tar -czvf vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.tar.gz vextd
+          sha256sum vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.tar.gz > vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.tar.gz.sha256
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           cd target/${{ matrix.target }}/release
-          Compress-Archive -Path vextd.exe,vext-send.exe -DestinationPath vext-${{ github.ref_name }}-${{ matrix.target }}.zip -ErrorAction SilentlyContinue
-          if (-not (Test-Path vext-${{ github.ref_name }}-${{ matrix.target }}.zip)) {
-            Compress-Archive -Path vextd.exe -DestinationPath vext-${{ github.ref_name }}-${{ matrix.target }}.zip
+          Compress-Archive -Path vextd.exe,vext-send.exe -DestinationPath vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip -ErrorAction SilentlyContinue
+          if (-not (Test-Path vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip)) {
+            Compress-Archive -Path vextd.exe -DestinationPath vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip
           }
-          Get-FileHash vext-${{ github.ref_name }}-${{ matrix.target }}.zip -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  vext-${{ github.ref_name }}-${{ matrix.target }}.zip" } | Out-File -FilePath vext-${{ github.ref_name }}-${{ matrix.target }}.zip.sha256
+          Get-FileHash vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip" } | Out-File -FilePath vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.zip.sha256
 
       - name: Upload artifact
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4
         with:
           name: vext-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/vext-${{ github.ref_name }}-${{ matrix.target }}.*
+            target/${{ matrix.target }}/release/vext-${{ env.RELEASE_TAG }}-${{ matrix.target }}.*
 
   build-deb:
     name: Build .deb package
@@ -168,6 +169,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           files: release/*
           generate_release_notes: true
           draft: false
