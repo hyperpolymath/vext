@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-FileCopyrightText: 2024-2026 Jonathan D.A. Jewell (hyperpolymath)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ✅ YOU ARE IN THE RIGHT PLACE — IF YOU WANT THE VEXT PROTOCOL SPEC
+// ══════════════════════════════════════════════════════════════════════════════
+//
+//  ┌─ YOU ARE HERE ─────────────────────────────────────────────────────────┐
+//  │  hyperpolymath/vext — Vext Protocol Canonical Specification            │
+//  │  Verifiable, Extensible Communications Protocol                        │
+//  │                                                                        │
+//  │  BLAKE3 hash chains proving feeds are:                                 │
+//  │    1. Chronological — messages appear in timestamp order               │
+//  │    2. Complete — no messages hidden, deleted, or suppressed            │
+//  │    3. Uninjected — no adverts or synthetic content inserted            │
+//  │    4. Attributable — each message cryptographically signed             │
+//  │                                                                        │
+//  │  Tech: Idris2 (formal proofs), Rust (reference impl), Ed25519         │
+//  │  Repo: github.com/hyperpolymath/vext                                   │
+//  └────────────────────────────────────────────────────────────────────────┘
+//
+//  ┌─ CONSUMERS OF THIS PROTOCOL ───────────────────────────────────────────┐
+//  │  Burble (voice/chat platform)                                          │
+//  │  burble/server/lib/burble/verification/vext.ex — Elixir implementation │
+//  │  burble/server/lib/burble/verification/vext_groove.ex — Groove bridge  │
+//  └────────────────────────────────────────────────────────────────────────┘
+//
+//  ┌─ COMPLETELY UNRELATED — DO NOT CONFUSE ────────────────────────────────┐
+//  │  vcs-ircd (formerly named "vext" — now renamed)                        │
+//  │  A pooled IRC notification daemon for Git/VCS events. Rust/Tokio.      │
+//  │  github.com/hyperpolymath/vcs-ircd                                     │
+//  │                                                                        │
+//  │  vexometer/vext — ISA component named "vext" = "vexed" (by LLMs)      │
+//  │  Part of the Irritation Surface Analyser. Nothing to do with this.     │
+//  └────────────────────────────────────────────────────────────────────────┘
+//
+// ══════════════════════════════════════════════════════════════════════════════
+
+[identity]
+name     = "vext"
+kind     = "protocol-spec"
+github   = "hyperpolymath/vext"
+path     = "vext"
+
+[purpose]
+summary  = "Verifiable, Extensible Communications Protocol — canonical spec and formal proofs"
+tech     = "Idris2 (formal proofs), Rust (reference impl), BLAKE3, Ed25519"
+first-dogfood = "burble/server/lib/burble/verification/vext.ex"
+
+[consumers]
+burble   = "burble/server/lib/burble/verification/vext.ex"
+
+[disambiguation]
+irc-daemon  = "vcs-ircd (hyperpolymath/vcs-ircd) — formerly named vext, unrelated IRC daemon"
+isa-vext    = "vexometer/vext — ISA component named vext meaning vexed, unrelated to protocol"
+
+[invariants]
+rules = [
+  "This is the canonical protocol HOME. Burble's vext.ex is a CONSUMER.",
+  "vcs-ircd is completely unrelated — an IRC daemon that formerly shared the name.",
+  "vexometer/vext is also unrelated — named 'vext' from 'vexed', part of the ISA.",
+  "Formal proofs go in src/proofs/ in Idris2 — no sorry/Admitted.",
+  "Reference implementation goes in src/ in Rust.",
+]

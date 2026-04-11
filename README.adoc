@@ -1,0 +1,58 @@
+= Vext — Verifiable, Extensible Communications Protocol
+// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-FileCopyrightText: 2024-2026 Jonathan D.A. Jewell (hyperpolymath)
+
+[NOTE]
+====
+*Name disambiguation* — three things were named "vext". This is the cryptographic protocol.
+
+* *You are here:* `hyperpolymath/vext` — the *Vext protocol spec* — BLAKE3 hash-chain
+  feed integrity, Idris2 formal proofs, Ed25519 signatures. You want this.
+* *Protocol consumer:* Burble implements this protocol at
+  `burble/server/lib/burble/verification/vext.ex` — an Elixir consumer of this spec.
+* *Unrelated (IRC daemon):* `hyperpolymath/vcs-ircd` (formerly named "vext") — a pooled
+  IRC notification daemon for Git/VCS events. Nothing to do with cryptography.
+* *Unrelated (ISA component):* `vexometer/vext` — named "vext" meaning "vexed" (by LLMs),
+  part of the Irritation Surface Analyser. Also nothing to do with this.
+====
+
+image:https://img.shields.io/badge/License-PMPL--1.0--or--later-indigo.svg[PMPL-1.0-or-later]
+
+Vext provides mathematical proof that a communications feed has not been tampered with.
+Any client can independently verify that a channel's messages are:
+
+1. **Chronological** — messages appear in timestamp order, not algorithmically sorted
+2. **Complete** — no messages have been hidden, deleted, or suppressed
+3. **Uninjected** — no advertisements or synthetic content have been inserted
+4. **Attributable** — each message's authorship is cryptographically verified
+
+== How it works
+
+Each message in a Vext-verified feed carries a *verification header* containing:
+
+* A BLAKE3 hash of (body + author + timestamp)
+* A hash chain link to the previous message (proving ordering)
+* A server signature (Ed25519, proving the server attests to this ordering)
+
+Clients can verify the chain independently. If any message is modified, inserted, or
+removed, the hash chain breaks and the client can detect it.
+
+== Status
+
+Early specification phase. First real-world deployment: Burble voice/chat platform.
+
+== Structure
+
+----
+vext/
+├── src/
+│   ├── proofs/     # Idris2 formal proofs
+│   └── ref/        # Rust reference implementation
+├── spec/           # Protocol specification documents
+└── 0-AI-MANIFEST.a2ml
+----
+
+== License
+
+PMPL-1.0-or-later (Palimpsest License).
+See link:LICENSE[LICENSE].
