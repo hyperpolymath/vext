@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
+# STATE.a2ml — Project state for vext
+
+(state
+  (version "1.0")
+  (project "vext")
+  (status "active")
+  (phase "maintenance"))
