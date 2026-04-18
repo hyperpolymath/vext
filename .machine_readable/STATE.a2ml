@@ -5,4 +5,16 @@
   (version "1.0")
   (project "vext")
   (status "active")
-  (phase "maintenance"))
+  (phase "maintenance")
+  (reference-implementation
+    (repo "developer-ecosystem/burble")
+    (paths
+      "server/lib/burble/verification/vext.ex"
+      "server/lib/burble/verification/vext_groove.ex"
+      "server/test/burble/verification/vext_test.exs"))
+  (lineage
+    (origin "originally an updated irker, renamed to vcs-ircd")
+    (current "generalised verified-extensions protocol")
+    (renamed-ancestor "developer-ecosystem/vcs-ircd"))
+  (consumers
+    "boj-server/cartridges/vext-mcp"))
