@@ -1,0 +1,421 @@
+// SPDX-License-Identifier: PMPL-1.0-or-later
+// Copyright (c) 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+
+= Vext — CRG Audit (2026-04-18)
+Jonathan D.A. Jewell
+2026-04-18
+:toc:
+:sectnums:
+
+== Scope and Standard
+
+Evaluates `verification-ecosystem/vext` (the Vext protocol *specification* repo —
+the cryptographic one, not `vcs-ircd` and not `vexometer/vext`) against
+*Component Readiness Grades v2.0 (STRICT)*, 2026-03-30 revision.
+
+- Standard: `standards/component-readiness-grades/COMPONENT-READINESS-GRADES.md`
+- Criteria boilerplate: `rsr-template-repo/docs/governance/CRG-CRITERIA.adoc`
+- Self-declared grade source:
+  * `.machine_readable/6a2/STATE.a2ml` -> `[status] / grade = "C"`,
+    `version = "0.1.0"`, `phase = "spec"`, `readiness = "C # 7/10 (Spec Complete)"`
+- Audit date: 2026-04-18
+- Auditor: Jonathan D.A. Jewell
+
+This audit grades the repo *as-is today*, not aspirationally.
+
+=== Schema drift note (three-way)
+
+Vext STATE.a2ml uses a *third* schema variant for its CRG declaration. Estate-wide,
+three different shapes exist in the wild:
+
+[cols="1,3,3"]
+|===
+| Variant | Shape | Example repo
+
+| Flat | `crg-grade = "C"` at top level | burble (pre-audit), most Bucket-B repos
+| Nested `[crg]` | `[crg]` section with `grade`, `completion-percentage` | sanctify-php
+| Nested `[status]` | `[status]` section with `grade`, `phase`, `readiness` | *vext (this repo)*
+|===
+
+This drift is flagged for standardisation but not resolved in this audit. Vext's
+`[status]` form is the *least* common of the three and complicates automated
+`rg -n 'crg-grade|\[crg\]'` starter sweeps — such sweeps would return an empty
+match here and risk misreading the repo as "ungraded".
+
+== v2.0 Strictness Recap
+
+[cols="1,3,4"]
+|===
+| Grade | Release Stage | Hard Requirement (v2.0)
+
+| X | None             | Untested.
+| F | Reject           | Harmful, wasteful, or superseded.
+| E | Pre-alpha        | >=1 test, failures documented.
+| D | Alpha            | Test matrix + scope documented + *RSR compliance mandatory*.
+| C | Alpha-stable     | Dogfooded, CI green, *deep per-file + per-directory annotation*.
+| B | Beta             | 6+ *diverse* external targets, issues fed back.
+| A | Stable           | Real-world external feedback confirms value; no harm.
+|===
+
+Publication requires B+. Long alpha is discipline, not shame.
+
+== Evidence Inventory (verified 2026-04-18)
+
+=== Repository contents (complete listing)
+
+This is an unusually small repo. The *entire* working tree is:
+
+----
+vext/
+├── 0-AI-MANIFEST.a2ml         (4,831 bytes — disambiguation boilerplate)
+├── LICENSE                    (256 bytes — PMPL pointer only, no text)
+├── README.adoc                (2,364 bytes — describes structure that does not exist)
+└── .machine_readable/
+    └── 6a2/
+        └── STATE.a2ml         (19 lines)
+----
+
+Five files total. One git commit: `86d28e7 chore(init): establish
+hyperpolymath/vext as canonical Vext protocol home`. No tags, no branches
+other than `main`.
+
+=== Structural compliance (Grade D floor)
+
+[cols="2,1,3"]
+|===
+| Item | State | Source
+
+| RSR mandatory workflows (17+)
+| ABSENT (0)
+| No `.github/` directory at all
+
+| `.machine_readable/6a2/` canonical A2ML
+| PARTIAL (1/6)
+| Only `STATE.a2ml`. META, ECOSYSTEM, AGENTIC, NEUROSYM, PLAYBOOK all missing.
+
+| `0-AI-MANIFEST.a2ml`
+| PRESENT
+| Root
+
+| `docs/EXPLAINME.adoc`, `docs/READINESS.md`, `docs/RSR_OUTLINE.adoc`
+| ABSENT
+| No `docs/` directory exists prior to this audit
+
+| `guix.scm` + `flake.nix`
+| ABSENT
+| No build/packaging manifests
+
+| `.well-known/` (security.txt, ai.txt, humans.txt)
+| ABSENT
+| No `.well-known/`
+
+| SPDX headers on source
+| N/A (no source files)
+| README + manifest carry headers; LICENSE is a one-line pointer
+
+| `Containerfile`
+| N/A
+| Spec repo, no container
+
+| Contractile trident (INTENT/TRUST/MUST/ADJUST)
+| ABSENT
+| None of the four contractile files exist
+
+| `Justfile` + `Mustfile` (no `Makefile`)
+| ABSENT
+| No build runner of any kind
+
+| Remote
+| `git@github.com:hyperpolymath/vext.git` (origin only) — OK
+| `git remote -v`
+|===
+
+RSR compliance verdict: *not met*. Grade D floor is *not* satisfied — there is
+no test matrix, no scope document beyond the README, and the RSR structural
+requirements are absent wholesale.
+
+=== README vs reality (structural claim mismatch)
+
+The README describes this layout:
+
+----
+vext/
+├── src/
+│   ├── proofs/     # Idris2 formal proofs
+│   └── ref/        # Rust reference implementation
+├── spec/           # Protocol specification documents
+└── 0-AI-MANIFEST.a2ml
+----
+
+*None of `src/`, `src/proofs/`, `src/ref/`, or `spec/` exists.* The README
+documents intent, not contents. This is the single largest evidence gap: a
+reader arriving via GitHub would expect to find proofs and a reference
+implementation and find neither.
+
+=== Code and proofs
+
+[cols="2,1,3"]
+|===
+| Item | Count | Notes
+
+| Idris2 ABI / proof modules (`src/proofs/**/*.idr`)
+| 0 files
+| Directory does not exist. STATE claims `formal-verification = "Idris2 proof-of-concept"`.
+
+| Rust reference implementation (`src/ref/**/*.rs`)
+| 0 files
+| Directory does not exist.
+
+| Protocol spec documents (`spec/**`)
+| 0 files
+| Directory does not exist.
+
+| Axiomatic `believe_me` sites
+| 0
+| No Idris2 code.
+
+| Non-axiomatic `believe_me`
+| 0
+| No Idris2 code.
+
+| Dangerous-pattern scan (`assert_total`, `Admitted`, `sorry`, `unsafeCoerce`, `Obj.magic`)
+| 0
+| No code to scan. Trivially passes, but this is vacuous, not evidence of rigour.
+|===
+
+The `formal-verification = "Idris2 proof-of-concept"` claim in STATE.a2ml is
+*unverifiable* in this repo — no `.idr` files are present.
+
+=== Test matrix
+
+- `total-tests = 0` — STATE.a2ml contains no test count field and no tests
+  exist on disk.
+- No suites, no CI workflow files, no runs.
+- No CI green history to cite.
+
+This fails the Grade E floor (">=1 test, failures documented"), let alone D's
+"test matrix documented".
+
+=== Annotation depth
+
+v2.0 C requires *per-file and per-directory orientation*. Vext has:
+
+- Per-directory orientation docs: *0* (no `docs/` subtree of any kind).
+- Per-unit README coverage: *N/A* (no units exist).
+- Per-module inline docs: *N/A* (no modules).
+- Per-subtree READMEs: *0*.
+
+The root-level `README.adoc` and `0-AI-MANIFEST.a2ml` together do a good job
+of *name disambiguation* (the three-way collision with `vcs-ircd` and
+`vexometer/vext` is clearly explained). That is useful orientation work,
+but it is not the *deep per-file / per-directory* annotation that Grade C
+demands.
+
+=== Dogfooding / home-stable evidence
+
+STATE.a2ml has no `[dogfooding-status]` section. However, external consumers
+*do* exist in the estate:
+
+[cols="2,1,4"]
+|===
+| Consumer | State | Notes
+
+| `developer-ecosystem/burble/server/lib/burble/verification/vext.ex`
+| PRESENT (257 LOC)
+| Elixir consumer implementing the protocol *by name*, with a bridge at
+  `vext_groove.ex` (155 LOC) and tests at `vext_test.exs` (119 LOC).
+
+| `boj-server/cartridges/vext-mcp/`
+| PRESENT (skeleton)
+| BoJ MCP cartridge with `abi/`, `adapter/`, `ffi/`, `panels/` subdirs and
+  READMEs. Structural only — no verified proof the cartridge drives this
+  spec repo's grammar.
+|===
+
+This is a genuine but *inverted* dogfood posture: downstream consumers have
+implemented more of the protocol than the canonical spec repo itself
+documents. The spec repo is effectively a placeholder that Burble and
+boj-server have outrun.
+
+That is not the situation CRG C's "dogfooded" clause contemplates. C means
+"the thing in this repo is used"; here, the thing in this repo is a README
++ manifest, and the *protocol idea* is used elsewhere. The dogfooding
+evidence cuts both ways.
+
+=== External validation (Grade B / A)
+
+STATE.a2ml has no `[external-targets]`, `[issues-fed-back]`, or
+`[field-signal]` sections. There is no awesome-list PR, no registry listing,
+no external reporter. B and A are unsupported on standard criteria, and
+would also be unsupported even under a generous re-reading of the Burble +
+boj-server consumers as "targets" — those are internal-estate, not diverse
+external, so they do not count towards the "6+ diverse external targets"
+requirement.
+
+== Grade x Evidence Matrix
+
+[cols="1,1,3,3"]
+|===
+| Grade | Met? | Evidence supporting | Evidence against / gaps
+
+| X
+| n/a
+| —
+| —
+
+| F
+| n/a
+| Not superseded; no harm signal; protocol concept is live in Burble
+| —
+
+| E
+| ✗
+| —
+| *Zero tests*. E floor requires >=1 test with failures documented. Vext has
+  no test files, no CI, no run log.
+
+| D
+| ✗
+| Name-disambiguation orientation is solid; remote is clean (GitHub-only)
+| No test matrix. No `.github/workflows/`. No `guix.scm`/`flake.nix`. No
+  contractile trident. No docs/ subtree. Only 1/6 canonical A2ML files
+  present. README describes directories that do not exist.
+
+| C
+| ✗
+| —
+| All C requirements fail: no deep annotation (no code to annotate), no CI
+  green, no canonical dogfood inside this repo.
+
+| B
+| ✗
+| —
+| No `[external-targets]`; 6+ diverse targets absent.
+
+| A
+| ✗
+| —
+| No `[field-signal]`.
+|===
+
+== Verdict
+
+*Current CRG grade: **X (None)**.*
+
+Under v2.0 STRICT, the E floor is "at least one test with failures
+documented". Vext has zero tests, zero source files, and zero workflow runs.
+The declared "C # 7/10 (Spec Complete)" readiness is not defensible: the spec
+itself is not in this repo — only the promise of one. The README's
+"Structure" section documents `src/proofs/`, `src/ref/`, and `spec/`
+directories that *do not exist on disk*.
+
+The self-declared `C` is a four-grade overclaim.
+
+Strongest *positive* signals (there are some):
+
+1. Name disambiguation is genuinely well done — the three-way collision with
+   `vcs-ircd` and `vexometer/vext` is explained in both `README.adoc` and
+   `0-AI-MANIFEST.a2ml`, which prevents a real future source of confusion.
+2. Downstream consumer exists and is substantial: Burble's
+   `vext.ex` + `vext_groove.ex` + `vext_test.exs` total 531 LOC of Elixir
+   implementing the protocol concept. If this content were lifted upstream,
+   the repo would have genuine D/E footing.
+3. The repo is honestly *marked* as `phase = "spec"` — the drift is in the
+   grade, not the phase. An honest phase + honest grade would be
+   `phase = "spec"` + `grade = "X"` (or `grade = "E"` once a single
+   property-based test of the hash-chain claim is written).
+
+What blocks *immediate* promotion to E:
+
+1. Write at least one test that executes *something* in this repo. A
+   property test of the BLAKE3 hash-chain linking rule, even in 10 lines of
+   Rust with one `cargo test` invocation, satisfies the E floor.
+2. Create `tests/` or `src/ref/tests/` to house it.
+3. Add `.github/workflows/ci.yml` that runs the test.
+
+What blocks promotion to D after that:
+
+1. RSR structural baseline: add `Justfile`, `guix.scm` (+`flake.nix`
+   fallback), the remaining five canonical A2ML files (META, ECOSYSTEM,
+   AGENTIC, NEUROSYM, PLAYBOOK), `docs/EXPLAINME.adoc`,
+   `docs/READINESS.md`, `.well-known/` baseline, and the contractile
+   trident.
+2. Populate the directories the README already promises: `src/proofs/` (at
+   least one Idris2 file typechecking green), `src/ref/` (a skeleton Rust
+   crate), and `spec/` (even a one-page protocol sketch counts as "scope
+   documented").
+3. Reconcile README against reality — either build the directories or
+   rewrite the README to match the 5-file state honestly.
+
+What blocks promotion to C after that:
+
+1. Pull Burble's `vext.ex` protocol logic *upstream* into `src/ref/` (or
+   reference it canonically) so the spec repo owns its own behaviour.
+2. Deep per-directory annotation (READMEs in every subtree).
+3. Green CI history and a `[dogfooding-status]` section with dated entries.
+
+== Notes on Non-Negotiables Respected by this Audit
+
+- The repo *is* GitHub-only on origin, which respects the single-forge
+  push policy.
+- SPDX headers are present on the two files that carry content
+  (`README.adoc`, `0-AI-MANIFEST.a2ml`).
+- The LICENSE pointer style (one-line reference rather than full PMPL
+  text) is noted but not penalised — the policy permits this pending the
+  canonical PMPL license file at `hyperpolymath/palimpsest-license`.
+- No `believe_me` / `assert_total` / `Admitted` / `sorry` risk because
+  there is no Idris2 code at all.
+
+== STATE.a2ml Update Recommendation (not executed)
+
+Recommend the following STATE.a2ml changes. *Not executed by this audit* —
+flagged for separate decision given the three-way schema drift:
+
+----
+# Current (vext's third-variant shape):
+[status]
+phase = "spec"
+grade = "C"
+readiness = "C # 7/10 (Spec Complete)"
+
+# Recommended:
+[status]
+phase = "spec"
+grade = "X"              # or "E" once a single test exists
+readiness = "X # 0/10 (README-only, directories promised by README do not exist)"
+demoted-from = "C"
+demoted-on   = "2026-04-18"
+demoted-by   = "CRG v2.0 STRICT audit (docs/governance/CRG-AUDIT-2026-04-18.adoc)"
+demoted-reason = "No tests, no source files, no workflows. README describes src/proofs/, src/ref/, spec/ that do not exist on disk."
+----
+
+*Schema question for separate resolution* — three variants exist estate-wide
+for the same concept:
+
+- Flat `crg-grade = "C"` (most common)
+- Nested `[crg] / grade = "C"` (sanctify-php)
+- Nested `[status] / grade = "C"` (*vext, least common*)
+
+Pick one and migrate. My recommendation (not binding here) is the flat
+`crg-grade` form because it keeps `rg -n 'crg-grade'` starter sweeps working
+across the estate without a three-way grep disjunction. If nesting is
+preferred, `[crg]` is more descriptive than `[status]` (which conflates
+grade, phase, and readiness into one section).
+
+== Related Files
+
+- `/var/mnt/eclipse/repos/verification-ecosystem/vext/.machine_readable/6a2/STATE.a2ml`
+  — authoritative self-declared state; the file that needs updating.
+- `/var/mnt/eclipse/repos/verification-ecosystem/vext/README.adoc`
+  — currently describes directories that do not exist.
+- `/var/mnt/eclipse/repos/verification-ecosystem/vext/0-AI-MANIFEST.a2ml`
+  — disambiguation boilerplate (genuinely useful).
+- `/var/mnt/eclipse/repos/developer-ecosystem/burble/server/lib/burble/verification/vext.ex`
+  — the downstream Elixir consumer (531 LOC across three files), which
+  currently carries more Vext implementation than the canonical spec repo.
+- `/var/mnt/eclipse/repos/boj-server/cartridges/vext-mcp/` — MCP cartridge
+  skeleton.
+- `/var/mnt/eclipse/repos/CRG-BUCKET-B-AUDIT-QUEUE-2026-04-18.md` — audit
+  queue that scheduled this pass.
+
+_End of audit._
