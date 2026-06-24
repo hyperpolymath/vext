@@ -1,5 +1,5 @@
 = Vext — Verifiable, Extensible Communications Protocol
-// SPDX-License-Identifier: MPL-2.0
+// SPDX-License-Identifier: CC-BY-SA-4.0
 // SPDX-FileCopyrightText: 2024-2026 Jonathan D.A. Jewell (hyperpolymath)
 
 [NOTE]
@@ -17,7 +17,7 @@
 ====
 
 image:https://img.shields.io/badge/OpenSSF-Best_Practices-green?logo=opensourcesecurity[OpenSSF Best Practices,link="https://www.bestpractices.dev/en/projects/new?repo_url=https://github.com/hyperpolymath/vext"]
-image:https://img.shields.io/badge/License-PMPL--1.0--or--later-indigo.svg[MPL-2.0]
+image:https://img.shields.io/badge/License-MPL--2.0-indigo.svg[MPL-2.0]
 image:https://api.thegreenwebfoundation.org/greencheckimage/github.com[Green Web,link="https://www.thegreenwebfoundation.org/green-web-check/?url=github.com"]
 
 Vext provides mathematical proof that a communications feed has not been tampered with.
